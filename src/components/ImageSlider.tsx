@@ -39,11 +39,12 @@ export default function ImageSlider({ datasSelecionadas, onClose }: ImageSliderP
   return (
     <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-xl shadow p-0 mb-8 max-h-[calc(100vh-48px)] flex flex-col">
       <div className="flex flex-col items-center px-8 pb-6 flex-1 w-full">
-        <div className="w-full aspect-[2.5/1] max-h-[70vh] rounded-lg overflow-hidden flex items-center justify-center">
+        <div className="w-full aspect-[2.5/1] max-h-[80vh] min-h-[300px] rounded-lg overflow-hidden flex items-center justify-center">
           <ReactCompareSlider
+            className="w-full h-full flex items-center justify-center"
             itemOne={<ReactCompareSliderImage src={imagensMock[idx1]} alt={datasSelecionadas[0]} style={{objectFit: 'cover', width: '100%', height: '100%'}} />}
             itemTwo={<ReactCompareSliderImage src={imagensMock[idx2]} alt={datasSelecionadas[1]} style={{objectFit: 'cover', width: '100%', height: '100%'}} />}
-            style={{ width: '100%', height: '100%' }}
+
             handle={
               <div style={{ position: 'relative', width: '32px', height: '100%' }}>
                 {/* Linha branca suave */}
