@@ -1,54 +1,60 @@
-# React + TypeScript + Vite
+# Timeline + Image Slider
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este projeto é uma aplicação React que exibe uma linha do tempo interativa com pontos selecionáveis e um slider comparativo de imagens.
 
-Currently, two official plugins are available:
+## Tecnologias Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React** + Vite
+- TypeScript
+- **TailwindCSS v4** 
+- **react-compare-slider**
+- Integração com API Rest
 
-## Expanding the ESLint configuration
+## Funcionalidades
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Exibe uma linha do tempo horizontal com múltiplos pontos (datas/imagens)
+- Permite selecionar até dois pontos para comparação
+- Destaca visualmente os pontos selecionados
+- Exibe um slider comparativo de imagens ao selecionar dois pontos
+- Navegação horizontal da timeline com setas
+- Loading visual (spinner) durante carregamento dos dados
+- Acessibilidade (aria-label, aria-pressed, role)
+- Consome dados de uma API configurável
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Como rodar o projeto
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+1. **Clone o repositório:**
+   ```bash
+   git clone git@github.com:danielharrison-l/slider-teste.git
+   cd slider-teste
+   ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+2. **Instale as dependências:**
+   ```bash
+   npm install
+   # ou
+   pnpm install
+   ```
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+3. **Configure a URL da API:**
+   Crie um arquivo `.env` na raiz do projeto com o conteúdo:
+   ```env
+   VITE_API_URL=http://localhost:3000
+   ```
+   (Altere a porta se necessário)
+
+4. **Inicie o servidor de desenvolvimento:**
+   ```bash
+   npm run dev
+   # ou
+   pnpm run dev
+   ```
+
+5. **Acesse no navegador:**
+   Abra [http://localhost:5173](http://localhost:5173) (ou a porta indicada no terminal)
+
+## Observações
+
+
+- O projeto é responsivo e pode ser acessado em diferentes tamanhos de tela.
+- Para customizar dados, altere a fonte da API.
