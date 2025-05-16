@@ -1,4 +1,3 @@
-import React from 'react';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 interface ImageSliderProps {
@@ -15,7 +14,7 @@ const imagensMock = [
   'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80',
 ];
 
-export default function ImageSlider({ datasSelecionadas, onClose }: ImageSliderProps) {
+export default function ImageSlider({ datasSelecionadas }: ImageSliderProps) {
   if (datasSelecionadas.length !== 2) return null;
 
   // Mapear as datas para índices das imagens mock
