@@ -7,7 +7,7 @@ interface ImageSliderProps {
   onClose: () => void;
 }
 
-export default function ImageSlider({ datasSelecionadas, onClose }: ImageSliderProps) {
+export default function ImageSlider({ datasSelecionadas }: ImageSliderProps) {
   const [imagens, setImagens] = useState<TimelinePoint[]>([]);
   const [loading, setLoading] = useState(true);
 
