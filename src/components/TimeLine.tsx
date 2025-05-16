@@ -1,71 +1,32 @@
 import { useState, useEffect, useRef } from 'react';
-import TimelineArrow from './TimeLineArrow';
-const datas = [
-  '28/03/2025',
-  '29/03/2025',
-  '30/03/2025',
-  '31/03/2025',
-  '01/04/2025',
-  '02/04/2025',
-  '03/04/2025',
-  '04/04/2025',
-  '05/04/2025',
-  '06/04/2025',
-  '07/04/2025',
-  '08/04/2025',
-  '09/04/2025',
-  '10/04/2025',
-];
-
-const rotulos = [
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula Geral da ETE\nLinha A',
-  'Válvula G\nLinha A',
-];
+import { fetchTimeline } from '../services/TimeLineApi.tsx';
+import type { TimelinePoint } from '../services/TimeLineApi.tsx';
+import TimelineArrow from './TimeLineArrow'; // ou { TimelineArrow } se for exportação nomeada
 
 type TimelineProps = {
-  onGenerateSlider: (datasSelecionadas: string[]) => void;
+  onGenerateSlider: (idsSelecionados: number[]) => void;
 };
 
-// Componente para ponto da timeline
-function TimelinePoint({
-  data,
-  rotulo,
+function TimelinePointComponent({
+  ponto,
   selecionado,
   onClick,
-  disabled
+  disabled,
 }: {
-  data: string;
-  rotulo: string;
+  ponto: TimelinePoint;
   selecionado: boolean;
   onClick: () => void;
   disabled: boolean;
 }) {
   return (
     <div className="flex flex-col items-center min-w-[220px]">
-      {/* Rótulo acima */}
       <span className="text-[13px] text-gray-700 font-medium mb-2 text-center leading-tight whitespace-pre-line">
-        {rotulo}
+        {ponto.rotulo}
       </span>
-      {/* Linha vertical */}
       <div className="relative flex flex-col items-center mb-1">
-        {/* Circulinho no topo */}
         <div className="w-2 h-2 bg-gray-300 rounded-full absolute -top-1" />
-        {/* Linha vertical */}
         <div className="w-0.5 h-6 bg-gray-200" />
       </div>
-      {/* Ponto amarelo com ícone */}
       <button
         className={`w-9 h-9 flex items-center justify-center mb-2 rounded-full border-2 focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-colors duration-200 z-10
           ${selecionado ? 'bg-yellow-400 border-yellow-400' : 'bg-white border-yellow-300'}
@@ -73,7 +34,7 @@ function TimelinePoint({
         onClick={onClick}
         disabled={disabled}
         style={{ boxShadow: selecionado ? '0 0 0 4px #fde68a' : undefined }}
-        aria-label={`Selecionar data ${data}`}
+        aria-label={`Selecionar data ${ponto.data}`}
         aria-pressed={selecionado}
       >
         {selecionado ? (
@@ -90,15 +51,25 @@ function TimelinePoint({
           </svg>
         )}
       </button>
-      {/* Data */}
-      <span className="text-xs text-gray-600 font-medium mt-1 text-center whitespace-nowrap">{data}</span>
+      <span className="text-xs text-gray-600 font-medium mt-1 text-center whitespace-nowrap">{ponto.data}</span>
     </div>
   );
 }
 
 export default function Timeline({ onGenerateSlider }: TimelineProps) {
-  const [selecionadas, setSelecionadas] = useState<string[]>([]);
+  const [pontos, setPontos] = useState<TimelinePoint[]>([]);
+  const [selecionadas, setSelecionadas] = useState<number[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    fetchTimeline()
+      .then(setPontos)
+      .catch(() => setErro('Erro ao carregar timeline'))
+      .finally(() => setLoading(false));
+  }, []);
 
   useEffect(() => {
     if (selecionadas.length === 2) {
@@ -106,11 +77,11 @@ export default function Timeline({ onGenerateSlider }: TimelineProps) {
     }
   }, [selecionadas, onGenerateSlider]);
 
-  function toggleData(data: string) {
-    if (selecionadas.includes(data)) {
-      setSelecionadas(selecionadas.filter((d) => d !== data));
+  function toggleData(id: number) {
+    if (selecionadas.includes(id)) {
+      setSelecionadas(selecionadas.filter((d) => d !== id));
     } else if (selecionadas.length < 2) {
-      setSelecionadas([...selecionadas, data]);
+      setSelecionadas([...selecionadas, id]);
     }
   }
 
@@ -125,6 +96,9 @@ export default function Timeline({ onGenerateSlider }: TimelineProps) {
     }
   }
 
+  if (loading) return <div className="p-8 text-center">Carregando linha do tempo...</div>;
+  if (erro) return <div className="p-8 text-center text-red-500">{erro}</div>;
+
   return (
     <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-xl shadow border border-gray-200 px-8 pt-4 pb-2 mb-8">
       <div className="flex items-center mb-4">
@@ -134,24 +108,21 @@ export default function Timeline({ onGenerateSlider }: TimelineProps) {
       <div className="-mx-8 w-[calc(100%+4rem)] border-b border-gray-200 mb-2" />
       <div className="relative w-full flex items-center mt-2" role="region" aria-label="Linha do tempo interativa">
         <TimelineArrow direction="left" onClick={scrollLeft} />
-        {/* Timeline rolável */}
         <div
           ref={timelineRef}
           className="overflow-x-auto w-full px-14 scrollbar-none"
           style={{ scrollBehavior: 'smooth', scrollbarWidth: 'none' }}
         >
           <div className="relative flex flex-col items-center w-full min-w-max">
-            {/* Linha horizontal */}
             <div className="absolute inset-x-14 top-[90px] h-1 bg-gray-200 z-0" />
             <div className="flex flex-row items-end justify-between w-full z-10 px-14">
-              {datas.map((data, idx) => (
-                <TimelinePoint
-                  key={data}
-                  data={data}
-                  rotulo={rotulos[idx]}
-                  selecionado={selecionadas.includes(data)}
-                  onClick={() => toggleData(data)}
-                  disabled={selecionadas.length === 2 && !selecionadas.includes(data)}
+              {pontos.map((ponto) => (
+                <TimelinePointComponent
+                  key={ponto.id}
+                  ponto={ponto}
+                  selecionado={selecionadas.includes(ponto.id)}
+                  onClick={() => toggleData(ponto.id)}
+                  disabled={selecionadas.length === 2 && !selecionadas.includes(ponto.id)}
                 />
               ))}
             </div>
@@ -161,4 +132,4 @@ export default function Timeline({ onGenerateSlider }: TimelineProps) {
       </div>
     </div>
   );
-} 
+}

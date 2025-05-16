@@ -1,39 +1,27 @@
+import { useEffect, useState } from 'react';
+import { fetchImagem, type TimelinePoint } from '../services/TimeLineApi.tsx';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 interface ImageSliderProps {
-  datasSelecionadas: string[];
+  datasSelecionadas: number[];
   onClose: () => void;
 }
 
-const imagensMock = [
-  'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1465101178521-c1a9136a3b99?auto=format&fit=crop&w=1200&q=80',
-  'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=1200&q=80',
-];
+export default function ImageSlider({ datasSelecionadas, onClose }: ImageSliderProps) {
+  const [imagens, setImagens] = useState<TimelinePoint[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export default function ImageSlider({ datasSelecionadas }: ImageSliderProps) {
-  if (datasSelecionadas.length !== 2) return null;
+  useEffect(() => {
+    if (datasSelecionadas.length === 2) {
+      setLoading(true);
+      Promise.all(datasSelecionadas.map(id => fetchImagem(id)))
+        .then(setImagens)
+        .finally(() => setLoading(false));
+    }
+  }, [datasSelecionadas]);
 
-  // Mapear as datas para índices das imagens mock
-  const idx1 = [
-    '28/03/2025',
-    '29/03/2025',
-    '30/03/2025',
-    '01/04/2025',
-    '02/04/2025',
-    '03/04/2025',
-  ].indexOf(datasSelecionadas[0]);
-  const idx2 = [
-    '28/03/2025',
-    '29/03/2025',
-    '30/03/2025',
-    '01/04/2025',
-    '02/04/2025',
-    '03/04/2025',
-  ].indexOf(datasSelecionadas[1]);
+  if (loading) return <div className="p-8 text-center">Carregando imagens...</div>;
+  if (imagens.length !== 2) return null;
 
   return (
     <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-xl shadow p-0 mb-8 max-h-[calc(100vh-48px)] flex flex-col">
@@ -41,12 +29,10 @@ export default function ImageSlider({ datasSelecionadas }: ImageSliderProps) {
         <div className="w-full aspect-[2.5/1] max-h-[80vh] min-h-[300px] rounded-lg overflow-hidden flex items-center justify-center">
           <ReactCompareSlider
             className="w-full h-full flex items-center justify-center"
-            itemOne={<ReactCompareSliderImage src={imagensMock[idx1]} alt={datasSelecionadas[0]} style={{objectFit: 'cover', width: '100%', height: '100%'}} />}
-            itemTwo={<ReactCompareSliderImage src={imagensMock[idx2]} alt={datasSelecionadas[1]} style={{objectFit: 'cover', width: '100%', height: '100%'}} />}
-
+            itemOne={<ReactCompareSliderImage src={imagens[0].imagemUrl} alt={imagens[0].rotulo} style={{objectFit: 'cover', width: '100%', height: '100%'}} />}
+            itemTwo={<ReactCompareSliderImage src={imagens[1].imagemUrl} alt={imagens[1].rotulo} style={{objectFit: 'cover', width: '100%', height: '100%'}} />}
             handle={
               <div style={{ position: 'relative', width: '32px', height: '100%' }}>
-                {/* Linha branca suave */}
                 <div
                   style={{
                     position: 'absolute',
@@ -59,10 +45,8 @@ export default function ImageSlider({ datasSelecionadas }: ImageSliderProps) {
                     transform: 'translateX(-50%)',
                     cursor: 'ew-resize',
                     zIndex: 10,
-                    // pointerEvents: 'none',
                   }}
                 />
-                {/* Handle branco maior */}
                 <div
                   className="w-6 h-6 bg-white rounded-full shadow flex items-center justify-center"
                   style={{
@@ -82,4 +66,4 @@ export default function ImageSlider({ datasSelecionadas }: ImageSliderProps) {
       </div>
     </div>
   );
-} 
+}

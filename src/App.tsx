@@ -4,11 +4,11 @@ import ImageSlider from './components/ImageSlider';
 import './styles.css';
 
 function App() {
-  const [datasSelecionadas, setDatasSelecionadas] = useState<string[]>([]);
+  const [datasSelecionadas, setDatasSelecionadas] = useState<number[]>([]);
   const [mostrarSlider, setMostrarSlider] = useState(false);
 
-  function handleGenerateSlider(datas: string[]) {
-    setDatasSelecionadas(datas);
+  function handleGenerateSlider(ids: number[]) {
+    setDatasSelecionadas(ids);
     setMostrarSlider(true);
   }
 
