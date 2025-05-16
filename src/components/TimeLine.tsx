@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const datas = [
   '28/03/2025',
@@ -25,6 +25,12 @@ type TimelineProps = {
 export default function Timeline({ onGenerateSlider }: TimelineProps) {
   const [selecionadas, setSelecionadas] = useState<string[]>([]);
 
+  useEffect(() => {
+    if (selecionadas.length === 2) {
+      onGenerateSlider(selecionadas);
+    }
+  }, [selecionadas, onGenerateSlider]);
+
   function toggleData(data: string) {
     if (selecionadas.includes(data)) {
       setSelecionadas(selecionadas.filter((d) => d !== data));
@@ -33,16 +39,13 @@ export default function Timeline({ onGenerateSlider }: TimelineProps) {
     }
   }
 
-  function handleGenerateSlider() {
-    onGenerateSlider(selecionadas);
-  }
-
   return (
     <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-xl shadow border border-gray-200 px-12 pt-6 pb-2 mb-8">
       <h2 className="text-base font-semibold text-gray-800 mb-2">Linha do Tempo | Vista Superior</h2>
       <div className="relative flex flex-col items-center w-full">
         {/* Linha horizontal */}
-        <div className="absolute top-16 left-0 right-0 h-1 bg-gray-200 z-0" style={{marginLeft: '56px', marginRight: '56px'}} />
+        <div className="absolute inset-x-14 top-[90px] h-1 bg-gray-200 z-0" />
+
         <div className="flex flex-row items-end justify-between w-full z-10 px-14">
           {datas.map((data, idx) => (
             <div key={data} className="flex flex-col items-center min-w-[100px]">
@@ -51,10 +54,16 @@ export default function Timeline({ onGenerateSlider }: TimelineProps) {
                 {rotulos[idx]}
               </span>
               {/* Linha vertical */}
-              <div className="w-0.5 h-6 bg-gray-200 mb-1" />
+              <div className="relative flex flex-col items-center mb-1">
+              {/* Circulinho no topo */}
+              <div className="w-2 h-2 bg-gray-300 rounded-full absolute -top-1" />
+                {/* Linha vertical */}
+                <div className="w-0.5 h-6 bg-gray-200" />
+              </div>
+
               {/* Ponto amarelo com ícone */}
               <button
-                className={`w-12 h-12 flex items-center justify-center mb-2 rounded-full border-2 focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-colors duration-200
+                className={`w-12 h-12 flex items-center justify-center mb-2 rounded-full border-2 focus:outline-none focus:ring-2 focus:ring-yellow-300 transition-colors duration-200 z-10
                   ${selecionadas.includes(data)
                     ? 'bg-yellow-400 border-yellow-400'
                     : 'bg-white border-yellow-300'}
@@ -63,7 +72,7 @@ export default function Timeline({ onGenerateSlider }: TimelineProps) {
                 disabled={selecionadas.length === 2 && !selecionadas.includes(data)}
                 style={{ boxShadow: selecionadas.includes(data) ? '0 0 0 4px #fde68a' : undefined }}
               >
-                {/* Ícone de imagem  */}
+                {/* Ícone de imagem centralizado, cor depende do estado */}
                 {selecionadas.includes(data) ? (
                   <svg viewBox="0 0 24 24" fill="none" width="22" height="22" xmlns="http://www.w3.org/2000/svg" className="text-white">
                     <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" strokeWidth="2"/>
@@ -84,16 +93,6 @@ export default function Timeline({ onGenerateSlider }: TimelineProps) {
           ))}
         </div>
       </div>
-      {selecionadas.length === 2 && (
-        <div className="flex justify-center mt-6 mb-2">
-          <button
-            className="px-8 py-2 bg-yellow-400 text-black font-semibold rounded shadow hover:bg-yellow-500 transition-colors border border-yellow-500"
-            onClick={handleGenerateSlider}
-          >
-            Gerar Slider
-          </button>
-        </div>
-      )}
     </div>
   );
 } 

@@ -1,3 +1,4 @@
+import React from 'react';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
 
 interface ImageSliderProps {
@@ -17,6 +18,7 @@ const imagensMock = [
 export default function ImageSlider({ datasSelecionadas, onClose }: ImageSliderProps) {
   if (datasSelecionadas.length !== 2) return null;
 
+  // Mapear as datas para índices das imagens mock
   const idx1 = [
     '28/03/2025',
     '29/03/2025',
@@ -35,20 +37,16 @@ export default function ImageSlider({ datasSelecionadas, onClose }: ImageSliderP
   ].indexOf(datasSelecionadas[1]);
 
   return (
-    <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-xl shadow p-0 mb-8">
-      <div className="flex items-center justify-between px-12 pt-6 pb-2">
-        <h2 className="text-base font-semibold text-gray-800">Slider</h2>
-        <button onClick={onClose} className="text-red-500 hover:underline text-sm font-medium">Fechar</button>
-      </div>
-      <div className="flex flex-col items-center px-8 pb-6">
-        <div className="w-full aspect-[2.5/1] bg-black rounded-lg overflow-hidden flex items-center justify-center">
+    <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-xl shadow p-0 mb-8 max-h-[calc(100vh-48px)] flex flex-col">
+      <div className="flex flex-col items-center px-8 pb-6 flex-1 w-full">
+        <div className="w-full aspect-[2.5/1] max-h-[70vh] rounded-lg overflow-hidden flex items-center justify-center">
           <ReactCompareSlider
             itemOne={<ReactCompareSliderImage src={imagensMock[idx1]} alt={datasSelecionadas[0]} style={{objectFit: 'cover', width: '100%', height: '100%'}} />}
             itemTwo={<ReactCompareSliderImage src={imagensMock[idx2]} alt={datasSelecionadas[1]} style={{objectFit: 'cover', width: '100%', height: '100%'}} />}
             style={{ width: '100%', height: '100%' }}
             handle={
               <div style={{ position: 'relative', width: '32px', height: '100%' }}>
-                {/* Linha branca */}
+                {/* Linha branca suave */}
                 <div
                   style={{
                     position: 'absolute',
@@ -64,7 +62,7 @@ export default function ImageSlider({ datasSelecionadas, onClose }: ImageSliderP
                     // pointerEvents: 'none',
                   }}
                 />
-                {/* Handle branco */}
+                {/* Handle branco maior */}
                 <div
                   className="w-6 h-6 bg-white rounded-full shadow flex items-center justify-center"
                   style={{
