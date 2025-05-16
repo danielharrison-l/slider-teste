@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchImagem, type TimelinePoint } from '../services/TimeLineApi.tsx';
 import { ReactCompareSlider, ReactCompareSliderImage } from 'react-compare-slider';
+import Spinner from './ui/spinner';
 
 interface ImageSliderProps {
   datasSelecionadas: number[];
@@ -12,6 +13,9 @@ export default function ImageSlider({ datasSelecionadas }: ImageSliderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Limpa as imagens quando as datas selecionadas mudam
+    setImagens([]);
+    
     if (datasSelecionadas.length === 2) {
       setLoading(true);
       Promise.all(datasSelecionadas.map(id => fetchImagem(id)))
@@ -20,7 +24,15 @@ export default function ImageSlider({ datasSelecionadas }: ImageSliderProps) {
     }
   }, [datasSelecionadas]);
 
-  if (loading) return <div className="p-8 text-center">Carregando imagens...</div>;
+  if (loading) return (
+    <div className="w-full max-w-screen-2xl mx-auto bg-white rounded-xl shadow p-8 mb-8 flex items-center justify-center min-h-[400px]">
+      <div className="flex flex-col items-center gap-4">
+        <Spinner />
+        <span className="text-gray-600">Carregando imagens...</span>
+      </div>
+    </div>
+  );
+  
   if (imagens.length !== 2) return null;
 
   return (
