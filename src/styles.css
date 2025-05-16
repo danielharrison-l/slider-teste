@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+.react-compare-slider__handle-wrapper {
+  background: rgba(255,255,255,0.85);
+  width: 2.5px !important;
+  min-width: 2.5px !important;
+  max-width: 2.5px !important;
+  border-radius: 9999px;
+  z-index: 10;
+  pointer-events: auto;
+}
+
+.react-compare-slider__handle-wrapper:hover,
+.react-compare-slider__handle-wrapper:active {
+  background: #fff;
+}
+
+.react-compare-slider__handle,
+.react-compare-slider__handle-wrapper,
+.react-compare-slider__handle:after,
+.react-compare-slider__handle:before,
+.react-compare-slider__handle *,
+.react-compare-slider__handle-wrapper * {
+  cursor: col-resize !important;
+}
